@@ -1,0 +1,400 @@
+openapi: 3.0.3
+info:
+  title: Todo API - Backend Foundation
+  description: |
+    RESTful API for multi-user task management.
+    All endpoints require user_id in path for data isolation.
+    Authentication (JWT) will be added in Spec 2.
+  version: 1.0.0
+  contact:
+    name: API Support
+
+servers:
+  - url: http://localhost:8000
+    description: Development server
+  - url: https://api.example.com
+    description: Production server (Railway/Render)
+
+paths:
+  /health:
+    get:
+      summary: Health check
+      description: Verify API is running and database is connected
+      operationId: healthCheck
+      tags:
+        - System
+      responses:
+        '200':
+          description: System healthy
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HealthResponse'
+        '500':
+          description: Database connection failed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /api/v1/{user_id}/tasks:
+    get:
+      summary: List user's tasks
+      description: |
+        Retrieve all tasks belonging to the specified user.
+        Optional status filter for pending/completed tasks.
+      operationId: listTasks
+      tags:
+        - Tasks
+      parameters:
+        - $ref: '#/components/parameters/UserId'
+        - name: status
+          in: query
+          description: Filter by completion status
+          required: false
+          schema:
+            type: string
+            enum: [pending, completed, all]
+            default: all
+      responses:
+        '200':
+          description: List of tasks
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TaskResponse'
+        '400':
+          description: Invalid user_id format
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+    post:
+      summary: Create a new task
+      description: Create a task for the specified user
+      operationId: createTask
+      tags:
+        - Tasks
+      parameters:
+        - $ref: '#/components/parameters/UserId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TaskCreate'
+      responses:
+        '201':
+          description: Task created
+          headers:
+            Location:
+              description: URL of created task
+              schema:
+                type: string
+                example: /api/v1/123e4567-e89b-12d3-a456-426614174000/tasks/1
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TaskResponse'
+        '400':
+          description: Invalid user_id format
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '422':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrorResponse'
+
+  /api/v1/{user_id}/tasks/{task_id}:
+    get:
+      summary: Get a single task
+      description: Retrieve a specific task by ID (must belong to user)
+      operationId: getTask
+      tags:
+        - Tasks
+      parameters:
+        - $ref: '#/components/parameters/UserId'
+        - $ref: '#/components/parameters/TaskId'
+      responses:
+        '200':
+          description: Task details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TaskResponse'
+        '400':
+          description: Invalid user_id format
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Task not found or belongs to different user
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+    put:
+      summary: Update a task
+      description: Update task title and/or description
+      operationId: updateTask
+      tags:
+        - Tasks
+      parameters:
+        - $ref: '#/components/parameters/UserId'
+        - $ref: '#/components/parameters/TaskId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TaskUpdate'
+      responses:
+        '200':
+          description: Task updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TaskResponse'
+        '400':
+          description: Invalid user_id format
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Task not found or belongs to different user
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '422':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrorResponse'
+
+    delete:
+      summary: Delete a task
+      description: Permanently remove a task
+      operationId: deleteTask
+      tags:
+        - Tasks
+      parameters:
+        - $ref: '#/components/parameters/UserId'
+        - $ref: '#/components/parameters/TaskId'
+      responses:
+        '204':
+          description: Task deleted (no content)
+        '400':
+          description: Invalid user_id format
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Task not found or belongs to different user
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /api/v1/{user_id}/tasks/{task_id}/complete:
+    patch:
+      summary: Toggle task completion
+      description: Toggle the completed status of a task
+      operationId: toggleTaskComplete
+      tags:
+        - Tasks
+      parameters:
+        - $ref: '#/components/parameters/UserId'
+        - $ref: '#/components/parameters/TaskId'
+      responses:
+        '200':
+          description: Task completion toggled
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TaskResponse'
+        '400':
+          description: Invalid user_id format
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Task not found or belongs to different user
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+components:
+  parameters:
+    UserId:
+      name: user_id
+      in: path
+      description: User UUID
+      required: true
+      schema:
+        type: string
+        format: uuid
+        example: 123e4567-e89b-12d3-a456-426614174000
+
+    TaskId:
+      name: task_id
+      in: path
+      description: Task ID (integer)
+      required: true
+      schema:
+        type: integer
+        minimum: 1
+        example: 1
+
+  schemas:
+    TaskCreate:
+      type: object
+      required:
+        - title
+      properties:
+        title:
+          type: string
+          minLength: 1
+          maxLength: 200
+          description: Task title (required)
+          example: Buy groceries
+        description:
+          type: string
+          maxLength: 1000
+          nullable: true
+          description: Task description (optional)
+          example: Milk, eggs, bread
+
+    TaskUpdate:
+      type: object
+      properties:
+        title:
+          type: string
+          minLength: 1
+          maxLength: 200
+          nullable: true
+          description: New title (optional)
+          example: Buy groceries and fruits
+        description:
+          type: string
+          maxLength: 1000
+          nullable: true
+          description: New description (optional)
+          example: Milk, eggs, bread, apples
+
+    TaskResponse:
+      type: object
+      required:
+        - id
+        - user_id
+        - title
+        - completed
+        - created_at
+        - updated_at
+      properties:
+        id:
+          type: integer
+          description: Task ID
+          example: 1
+        user_id:
+          type: string
+          format: uuid
+          description: Owner user ID
+          example: 123e4567-e89b-12d3-a456-426614174000
+        title:
+          type: string
+          description: Task title
+          example: Buy groceries
+        description:
+          type: string
+          nullable: true
+          description: Task description
+          example: Milk, eggs, bread
+        completed:
+          type: boolean
+          description: Completion status
+          example: false
+        created_at:
+          type: string
+          format: date-time
+          description: Creation timestamp
+          example: "2026-02-04T10:30:00Z"
+        updated_at:
+          type: string
+          format: date-time
+          description: Last update timestamp
+          example: "2026-02-04T10:30:00Z"
+
+    HealthResponse:
+      type: object
+      required:
+        - status
+        - database
+      properties:
+        status:
+          type: string
+          example: ok
+        database:
+          type: string
+          example: connected
+
+    ErrorResponse:
+      type: object
+      required:
+        - detail
+      properties:
+        detail:
+          type: string
+          description: Error message
+          example: Task not found
+        status_code:
+          type: integer
+          description: HTTP status code
+          example: 404
+
+    ValidationErrorResponse:
+      type: object
+      required:
+        - detail
+      properties:
+        detail:
+          type: array
+          items:
+            type: object
+            properties:
+              loc:
+                type: array
+                items:
+                  oneOf:
+                    - type: string
+                    - type: integer
+                description: Location of error
+                example: ["body", "title"]
+              msg:
+                type: string
+                description: Error message
+                example: field required
+              type:
+                type: string
+                description: Error type
+                example: value_error.missing
+
+tags:
+  - name: System
+    description: System health and status endpoints
+  - name: Tasks
+    description: Task CRUD operations

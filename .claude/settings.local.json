@@ -3,7 +3,9 @@
     "allow": [
       "Bash(git fetch:*)",
       "Bash(ls:*)",
-      "Bash(.specify/scripts/bash/create-new-feature.sh:*)"
+      "Bash(.specify/scripts/bash/create-new-feature.sh:*)",
+      "Bash(.specify/scripts/bash/setup-plan.sh:*)",
+      "Bash(git checkout:*)"
     ]
   }
 }
