@@ -5,7 +5,10 @@
       "Bash(ls:*)",
       "Bash(.specify/scripts/bash/create-new-feature.sh:*)",
       "Bash(.specify/scripts/bash/setup-plan.sh:*)",
-      "Bash(git checkout:*)"
+      "Bash(git checkout:*)",
+      "Bash(git stash pop:*)",
+      "Bash(git stash drop:*)",
+      "Bash(git add:*)"
     ]
   }
 }
