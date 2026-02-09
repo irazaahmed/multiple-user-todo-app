@@ -8,7 +8,28 @@
       "Bash(git checkout:*)",
       "Bash(git stash pop:*)",
       "Bash(git stash drop:*)",
-      "Bash(git add:*)"
+      "Bash(git add:*)",
+      "Bash(git commit -m \"$\\(cat <<''EOF''\nadd tasks.md and PHR for backend foundation spec\n\n- Generated 25 implementation tasks across 11 phases\n- Tasks organized by user story \\(US1-US8\\) per SDD workflow\n- Includes MVP scope \\(T001-T014\\), dependency graph, parallel opportunities\n- PHR recorded for task generation step\n\nCo-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>\nEOF\n\\)\")",
+      "Bash(git push:*)",
+      "Bash(git pull:*)",
+      "Bash(git stash:*)",
+      "Bash(.specify/scripts/bash/check-prerequisites.sh --json --require-tasks --include-tasks)",
+      "Bash(if [ -f .gitignore ])",
+      "Bash(then echo \"backend/.env\")",
+      "Bash(else echo \"backend/.env\")",
+      "Bash(fi)",
+      "Bash(xargs ls -la)",
+      "Bash(uvicorn main:app --reload)",
+      "Bash(pip install python-dotenv sqlmodel fastapi uvicorn psycopg2-binary)",
+      "Bash(source venv/bin/activate)",
+      "Bash(python -m venv venv)",
+      "Bash(python3 -m venv venv)",
+      "Bash(source ../venv/bin/activate)",
+      "Bash(find . -name \"__pycache__\" -type d -exec rm -rf {} +)",
+      "Bash(find . -name \"*.pyc\" -delete)",
+      "Bash(python -c:*)",
+      "Bash(pip install:*)",
+      "Bash(uvicorn main:app:*)"
     ]
   }
 }

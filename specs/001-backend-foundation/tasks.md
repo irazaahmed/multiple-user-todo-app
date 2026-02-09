@@ -24,10 +24,10 @@
 
 **Purpose**: Project initialization and directory structure
 
-- [ ] T001 Create backend directory structure with `backend/`, `backend/routes/`, `backend/__init__.py`, `backend/routes/__init__.py`
-- [ ] T002 Create `backend/requirements.txt` with pinned dependencies: fastapi==0.115.0, uvicorn[standard]==0.32.0, sqlmodel==0.0.22, psycopg2-binary==2.9.10, python-dotenv==1.0.1, pydantic==2.10.0
-- [ ] T003 [P] Create `backend/.env.example` with DATABASE_URL and CORS_ORIGINS placeholders and documentation comments
-- [ ] T004 [P] Add `backend/.env` to `.gitignore` to prevent secrets from being committed
+- [X] T001 Create backend directory structure with `backend/`, `backend/routes/`, `backend/__init__.py`, `backend/routes/__init__.py`
+- [X] T002 Create `backend/requirements.txt` with pinned dependencies: fastapi==0.115.0, uvicorn[standard]==0.32.0, sqlmodel==0.0.22, psycopg2-binary==2.9.10, python-dotenv==1.0.1, pydantic==2.10.0
+- [X] T003 [P] Create `backend/.env.example` with DATABASE_URL and CORS_ORIGINS placeholders and documentation comments
+- [X] T004 [P] Add `backend/.env` to `.gitignore` to prevent secrets from being committed
 
 ---
 
@@ -37,10 +37,10 @@
 
 **CRITICAL**: No user story work can begin until this phase is complete
 
-- [ ] T005 Create User SQLModel in `backend/models.py` with id (UUID, PK, default uuid4), email (str, unique, index, max 255), password_hash (str, max 255), name (Optional[str], max 255), created_at (datetime), updated_at (datetime), and tasks relationship (Ref: data-model.md User entity, FR-001)
-- [ ] T006 Create Task SQLModel in `backend/models.py` with id (Optional[int], PK), user_id (UUID, FK users.id, index), title (str, max 200), description (Optional[str]), completed (bool, default False), created_at (datetime), updated_at (datetime), and user relationship. Add index on completed and created_at (Ref: data-model.md Task entity, FR-002, FR-003, FR-004)
-- [ ] T007 Create database connection module `backend/db.py` with DATABASE_URL from env var, create_engine with pool_size=20, max_overflow=10, pool_pre_ping=True, init_db() function calling SQLModel.metadata.create_all, and get_session() generator yielding Session for FastAPI Depends (Ref: research.md decisions 3, 7; FR-019)
-- [ ] T008 [P] Create Pydantic schemas in `backend/schemas.py`: TaskCreate (title: str min 1 max 200, description: Optional[str] max 1000), TaskUpdate (title: Optional[str] min 1 max 200, description: Optional[str] max 1000), TaskResponse (id, user_id, title, description, completed, created_at, updated_at with model_config ConfigDict from_attributes=True) (Ref: contracts/openapi.yaml schemas, FR-014, FR-015)
+- [X] T005 Create User SQLModel in `backend/models.py` with id (UUID, PK, default uuid4), email (str, unique, index, max 255), password_hash (str, max 255), name (Optional[str], max 255), created_at (datetime), updated_at (datetime), and tasks relationship (Ref: data-model.md User entity, FR-001)
+- [X] T006 Create Task SQLModel in `backend/models.py` with id (Optional[int], PK), user_id (UUID, FK users.id, index), title (str, max 200), description (Optional[str]), completed (bool, default False), created_at (datetime), updated_at (datetime), and user relationship. Add index on completed and created_at (Ref: data-model.md Task entity, FR-002, FR-003, FR-004)
+- [X] T007 Create database connection module `backend/db.py` with DATABASE_URL from env var, create_engine with pool_size=20, max_overflow=10, pool_pre_ping=True, init_db() function calling SQLModel.metadata.create_all, and get_session() generator yielding Session for FastAPI Depends (Ref: research.md decisions 3, 7; FR-019)
+- [X] T008 [P] Create Pydantic schemas in `backend/schemas.py`: TaskCreate (title: str min 1 max 200, description: Optional[str] max 1000), TaskUpdate (title: Optional[str] min 1 max 200, description: Optional[str] max 1000), TaskResponse (id, user_id, title, description, completed, created_at, updated_at with model_config ConfigDict from_attributes=True) (Ref: contracts/openapi.yaml schemas, FR-014, FR-015)
 
 **Checkpoint**: Foundation ready - models, database connection, and schemas available for all user stories
 
@@ -54,10 +54,10 @@
 
 ### Implementation for User Story 1
 
-- [ ] T009 [US1] Create FastAPI application in `backend/main.py` with lifespan context manager that calls init_db() on startup, configure CORSMiddleware reading CORS_ORIGINS from env var (split on comma), allow methods=["*"] and headers=["*"] (Ref: research.md decisions 1, 6; FR-019, FR-020)
-- [ ] T010 [US1] Implement GET /health endpoint in `backend/main.py` that queries database with `SELECT 1` to verify connectivity and returns `{"status": "ok", "database": "connected"}` with 200, or `{"detail": "Database connection failed", "status_code": 500}` on failure (Ref: contracts/openapi.yaml /health, FR-018)
-- [ ] T011 [US1] Include task router in `backend/main.py` with `app.include_router(router, prefix="/api/v1")` importing from `backend/routes/tasks.py` (Ref: plan.md Phase 5)
-- [ ] T012 [US1] Load environment variables using python-dotenv in `backend/main.py` by calling `load_dotenv()` before app creation (Ref: constitution Principle II - all secrets via env vars)
+- [X] T009 [US1] Create FastAPI application in `backend/main.py` with lifespan context manager that calls init_db() on startup, configure CORSMiddleware reading CORS_ORIGINS from env var (split on comma), allow methods=["*"] and headers=["*"] (Ref: research.md decisions 1, 6; FR-019, FR-020)
+- [X] T010 [US1] Implement GET /health endpoint in `backend/main.py` that queries database with `SELECT 1` to verify connectivity and returns `{"status": "ok", "database": "connected"}` with 200, or `{"detail": "Database connection failed", "status_code": 500}` on failure (Ref: contracts/openapi.yaml /health, FR-018)
+- [X] T011 [US1] Include task router in `backend/main.py` with `app.include_router(router, prefix="/api/v1")` importing from `backend/routes/tasks.py` (Ref: plan.md Phase 5)
+- [X] T012 [US1] Load environment variables using python-dotenv in `backend/main.py` by calling `load_dotenv()` before app creation (Ref: constitution Principle II - all secrets via env vars)
 
 **Checkpoint**: Application starts, connects to Neon database, tables created, health endpoint returns 200
 
@@ -71,7 +71,7 @@
 
 ### Implementation for User Story 2
 
-- [ ] T013 [US2] Implement POST `/{user_id}/tasks` endpoint in `backend/routes/tasks.py` that validates user_id as UUID, creates Task with user_id from path and fields from TaskCreate body, commits to database, returns 201 with TaskResponse and Location header (Ref: contracts/openapi.yaml POST /tasks, FR-005, FR-011)
+- [X] T013 [US2] Implement POST `/{user_id}/tasks` endpoint in `backend/routes/tasks.py` that validates user_id as UUID, creates Task with user_id from path and fields from TaskCreate body, commits to database, returns 201 with TaskResponse and Location header (Ref: contracts/openapi.yaml POST /tasks, FR-005, FR-011)
 
 **Checkpoint**: Tasks can be created for a user and persisted to database
 
@@ -85,7 +85,7 @@
 
 ### Implementation for User Story 3
 
-- [ ] T014 [US3] Implement GET `/{user_id}/tasks` endpoint in `backend/routes/tasks.py` that queries tasks filtered by user_id, supports optional `?status=pending|completed|all` query parameter, orders by created_at DESC, returns 200 with List[TaskResponse] or empty array [] (Ref: contracts/openapi.yaml GET /tasks, FR-006, FR-011, data-model.md query patterns)
+- [X] T014 [US3] Implement GET `/{user_id}/tasks` endpoint in `backend/routes/tasks.py` that queries tasks filtered by user_id, supports optional `?status=pending|completed|all` query parameter, orders by created_at DESC, returns 200 with List[TaskResponse] or empty array [] (Ref: contracts/openapi.yaml GET /tasks, FR-006, FR-011, data-model.md query patterns)
 
 **Checkpoint**: User sees only their tasks, filtering works, empty list for new users
 
@@ -99,7 +99,7 @@
 
 ### Implementation for User Story 4
 
-- [ ] T015 [US4] Implement GET `/{user_id}/tasks/{task_id}` endpoint in `backend/routes/tasks.py` that queries by BOTH task_id AND user_id (data isolation), returns 200 with TaskResponse if found, raises HTTPException 404 with detail "Task not found" if not found or belongs to different user (Ref: contracts/openapi.yaml GET /tasks/{id}, FR-007, FR-011, FR-012)
+- [X] T015 [US4] Implement GET `/{user_id}/tasks/{task_id}` endpoint in `backend/routes/tasks.py` that queries by BOTH task_id AND user_id (data isolation), returns 200 with TaskResponse if found, raises HTTPException 404 with detail "Task not found" if not found or belongs to different user (Ref: contracts/openapi.yaml GET /tasks/{id}, FR-007, FR-011, FR-012)
 
 **Checkpoint**: Single task retrieval works with data isolation enforced
 
@@ -113,7 +113,7 @@
 
 ### Implementation for User Story 5
 
-- [ ] T016 [US5] Implement PUT `/{user_id}/tasks/{task_id}` endpoint in `backend/routes/tasks.py` that queries task by task_id AND user_id, raises 404 if not found, applies non-None fields from TaskUpdate body, sets updated_at to datetime.utcnow(), commits and returns 200 with updated TaskResponse (Ref: contracts/openapi.yaml PUT /tasks/{id}, FR-008, FR-011, FR-012, data-model.md update pattern)
+- [X] T016 [US5] Implement PUT `/{user_id}/tasks/{task_id}` endpoint in `backend/routes/tasks.py` that queries task by task_id AND user_id, raises 404 if not found, applies non-None fields from TaskUpdate body, sets updated_at to datetime.utcnow(), commits and returns 200 with updated TaskResponse (Ref: contracts/openapi.yaml PUT /tasks/{id}, FR-008, FR-011, FR-012, data-model.md update pattern)
 
 **Checkpoint**: Tasks can be updated with partial fields, timestamp refreshed
 
@@ -127,7 +127,7 @@
 
 ### Implementation for User Story 6
 
-- [ ] T017 [US6] Implement DELETE `/{user_id}/tasks/{task_id}` endpoint in `backend/routes/tasks.py` that queries task by task_id AND user_id, raises 404 if not found, calls session.delete(task), commits, returns Response with status_code=204 (Ref: contracts/openapi.yaml DELETE /tasks/{id}, FR-009, FR-011, FR-012)
+- [X] T017 [US6] Implement DELETE `/{user_id}/tasks/{task_id}` endpoint in `backend/routes/tasks.py` that queries task by task_id AND user_id, raises 404 if not found, calls session.delete(task), commits, returns Response with status_code=204 (Ref: contracts/openapi.yaml DELETE /tasks/{id}, FR-009, FR-011, FR-012)
 
 **Checkpoint**: Tasks deleted permanently, 404 for non-existent or other user's tasks
 
@@ -141,7 +141,7 @@
 
 ### Implementation for User Story 7
 
-- [ ] T018 [US7] Implement PATCH `/{user_id}/tasks/{task_id}/complete` endpoint in `backend/routes/tasks.py` that queries task by task_id AND user_id, raises 404 if not found, toggles task.completed with `not` operator, sets updated_at to datetime.utcnow(), commits and returns 200 with updated TaskResponse (Ref: contracts/openapi.yaml PATCH /complete, FR-010, FR-011, FR-012, data-model.md toggle pattern)
+- [X] T018 [US7] Implement PATCH `/{user_id}/tasks/{task_id}/complete` endpoint in `backend/routes/tasks.py` that queries task by task_id AND user_id, raises 404 if not found, toggles task.completed with `not` operator, sets updated_at to datetime.utcnow(), commits and returns 200 with updated TaskResponse (Ref: contracts/openapi.yaml PATCH /complete, FR-010, FR-011, FR-012, data-model.md toggle pattern)
 
 **Checkpoint**: Completion toggles correctly, timestamp updated, data isolation enforced
 
@@ -155,8 +155,8 @@
 
 ### Implementation for User Story 8
 
-- [ ] T019 [US8] Add UUID validation for user_id path parameter across all routes in `backend/routes/tasks.py` by using `UUID` type annotation on user_id parameter; FastAPI auto-returns 422 for invalid UUIDs, add custom exception handler in `backend/main.py` to convert to 400 with `{"detail": "Invalid user_id format", "status_code": 400}` (Ref: FR-013, FR-016, edge case: invalid UUID format)
-- [ ] T020 [US8] Add global exception handler in `backend/main.py` for database errors (SQLAlchemyError) that returns 500 with `{"detail": "Internal server error", "status_code": 500}` without exposing stack traces (Ref: FR-017, edge case: database connection failure)
+- [X] T019 [US8] Add UUID validation for user_id path parameter across all routes in `backend/routes/tasks.py` by using `UUID` type annotation on user_id parameter; FastAPI auto-returns 422 for invalid UUIDs, add custom exception handler in `backend/main.py` to convert to 400 with `{"detail": "Invalid user_id format", "status_code": 400}` (Ref: FR-013, FR-016, edge case: invalid UUID format)
+- [X] T020 [US8] Add global exception handler in `backend/main.py` for database errors (SQLAlchemyError) that returns 500 with `{"detail": "Internal server error", "status_code": 500}` without exposing stack traces (Ref: FR-017, edge case: database connection failure)
 
 **Checkpoint**: All error scenarios return correct status codes with clear messages, no stack traces exposed
 
@@ -166,11 +166,11 @@
 
 **Purpose**: Documentation and final verification
 
-- [ ] T021 Create `backend/README.md` with setup instructions, environment variables, how to run server, API endpoint documentation with curl examples (Ref: quickstart.md)
-- [ ] T022 Verify all endpoints with curl: create test user via SQL, test POST/GET/GET-single/PUT/DELETE/PATCH for happy paths (Ref: quickstart.md test commands)
-- [ ] T023 Verify data isolation: create two users, create tasks for each, confirm User A cannot see/modify User B's tasks (Ref: FR-011, FR-012, SC-004, SC-005)
-- [ ] T024 Verify validation: test missing title (422), title >200 chars (422), description >1000 chars (422), invalid UUID (400), non-existent task (404) (Ref: FR-014, FR-015, FR-016)
-- [ ] T025 Add type hints to all function parameters and return values in all backend files, verify with mypy (Ref: constitution Principle III - Type Safety)
+- [X] T021 Create `backend/README.md` with setup instructions, environment variables, how to run server, API endpoint documentation with curl examples (Ref: quickstart.md)
+- [X] T022 Verify all endpoints with curl: create test user via SQL, test POST/GET/GET-single/PUT/DELETE/PATCH for happy paths (Ref: quickstart.md test commands)
+- [X] T023 Verify data isolation: create two users, create tasks for each, confirm User A cannot see/modify User B's tasks (Ref: FR-011, FR-012, SC-004, SC-005)
+- [X] T024 Verify validation: test missing title (422), title >200 chars (422), description >1000 chars (422), invalid UUID (400), non-existent task (404) (Ref: FR-014, FR-015, FR-016)
+- [X] T025 Add type hints to all function parameters and return values in all backend files, verify with mypy (Ref: constitution Principle III - Type Safety)
 
 ---
 
